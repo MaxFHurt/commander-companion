@@ -2792,5 +2792,194 @@ body{padding-bottom:env(safe-area-inset-bottom)!important;}
 }
 </style>
 
+
+<style id="cc055-step3-player-header-status-icons">
+/* 0.5.5 Master — Step 3
+   ONLY change: active-player header name/status space.
+   - remove public CMD TAX stat from active header
+   - keep commander-card tax badge untouched
+   - compact icon-only statuses, shown only when active
+*/
+#gameScreen .v043-active .v043-header{
+  grid-template-columns:minmax(0,1fr) auto auto!important;
+  column-gap:8px!important;
+}
+#gameScreen .v043-active .v043-identity{
+  min-width:0!important;
+  width:100%!important;
+}
+#gameScreen .v043-active .v043-identity b{
+  max-width:none!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+}
+#gameScreen .vm-status-pill{
+  display:none!important;
+}
+#gameScreen .cc055-status-icons{
+  grid-column:2!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:5px!important;
+  min-width:0!important;
+  min-height:28px!important;
+}
+#gameScreen .cc055-status-icons:empty{
+  display:none!important;
+}
+#gameScreen .cc055-status-icon{
+  width:24px!important;
+  height:24px!important;
+  min-width:24px!important;
+  border:1px solid #4d5558!important;
+  border-radius:50%!important;
+  display:grid!important;
+  place-items:center!important;
+  background:#090c0d!important;
+  box-shadow:inset 0 0 7px #000!important;
+  padding:3px!important;
+}
+#gameScreen .cc055-status-icon svg{
+  width:16px!important;
+  height:16px!important;
+  display:block!important;
+}
+#gameScreen .cc055-status-icon.monarch{color:#f2bd38!important;border-color:#926b22!important;}
+#gameScreen .cc055-status-icon.poison{color:#67d447!important;border-color:#397e2a!important;}
+#gameScreen .cc055-status-icon.initiative{color:#ef642d!important;border-color:#8b4426!important;}
+#gameScreen .cc055-status-icon.blessing{color:#e7d367!important;border-color:#8b7d36!important;}
+#gameScreen .cc055-status-icon.ring{color:#a86df2!important;border-color:#643b98!important;}
+#gameScreen .cc055-status-icon.stun{color:#a86df2!important;border-color:#643b98!important;}
+#gameScreen .cc055-status-icon.generic{color:#58bff0!important;border-color:#2d6985!important;}
+
+#gameScreen .v043-active .v043-top-stats{
+  grid-column:3!important;
+}
+
+/* At phone width, reserve the freed commander-tax space for name + statuses. */
+@media(max-width:430px){
+  #gameScreen .v043-active .v043-header{
+    grid-template-columns:minmax(0,1fr) auto auto!important;
+    gap:5px!important;
+  }
+  #gameScreen .cc055-status-icons{gap:3px!important;}
+  #gameScreen .cc055-status-icon{
+    width:21px!important;
+    height:21px!important;
+    min-width:21px!important;
+    padding:2px!important;
+  }
+  #gameScreen .cc055-status-icon svg{
+    width:14px!important;
+    height:14px!important;
+  }
+}
+</style>
+
+<script id="cc055-step3-player-header-status-icons-runtime">
+(function(){
+  'use strict';
+
+  const ICONS={
+    monarch:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18h18l-1.5-10-4.5 4-3-7-3 7-4.5-4L3 18Z" fill="currentColor"/><path d="M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    poison:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C9.2 6.2 5.5 10.2 5.5 14.6A6.5 6.5 0 0 0 12 21a6.5 6.5 0 0 0 6.5-6.4C18.5 10.2 14.8 6.2 12 2Z" fill="currentColor"/><path d="M9.2 15.3c.7 1.7 2 2.5 3.9 2.5" fill="none" stroke="#071008" stroke-width="1.7" stroke-linecap="round"/></svg>',
+    initiative:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 20 4M8 4h12v12" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 13v7h7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    blessing:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    ring:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/></svg>',
+    stun:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 2.3 6.2L21 6l-3.8 5.6L22 15l-6.6.2L14 22l-3.2-5.8L5 20l2.2-6.3L2 11l6.4-1L7 4l5 4Z" fill="currentColor"/></svg>',
+    generic:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 21 19H3L12 3Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="12" cy="15.5" r="1.2" fill="currentColor"/><path d="M12 8v4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'
+  };
+
+  function normalizeStatus(s){
+    return String(s||'').trim().toLowerCase().replace(/[_-]+/g,' ');
+  }
+
+  function statusEntries(p){
+    const out=[];
+    const raw=(p?.statuses||[]).filter(Boolean).map(normalizeStatus);
+
+    raw.forEach(s=>{
+      if(/monarch/.test(s)) out.push({kind:'monarch',label:'Monarch'});
+      else if(/initiative/.test(s)) out.push({kind:'initiative',label:'Initiative'});
+      else if(/city.?s blessing|citys blessing|blessing/.test(s)) out.push({kind:'blessing',label:"City's Blessing"});
+      else if(/ring/.test(s)) out.push({kind:'ring',label:'The Ring'});
+      else if(/stun/.test(s)) out.push({kind:'stun',label:'Stunned'});
+      else out.push({kind:'generic',label:String(s).replace(/\b\w/g,c=>c.toUpperCase())});
+    });
+
+    const poison=Number(p?.poison||0);
+    if(poison>0) out.push({kind:'poison',label:`Poison ${poison}`,count:poison});
+
+    /* de-dupe by kind+label, preserving current game state order */
+    return out.filter((x,i,a)=>a.findIndex(y=>y.kind===x.kind&&y.label===x.label)===i);
+  }
+
+  function renderStatusIcons(header,p){
+    header.querySelector('.vm-status-pill')?.remove();
+
+    let tray=header.querySelector('.cc055-status-icons');
+    if(!tray){
+      tray=document.createElement('div');
+      tray.className='cc055-status-icons';
+      const stats=header.querySelector('.v043-top-stats');
+      if(stats) header.insertBefore(tray,stats);
+      else header.appendChild(tray);
+    }
+
+    const entries=statusEntries(p);
+    tray.innerHTML=entries.map(x=>
+      `<span class="cc055-status-icon ${x.kind}" title="${x.label}" aria-label="${x.label}">${ICONS[x.kind]||ICONS.generic}</span>`
+    ).join('');
+  }
+
+  function removeActiveHeaderCommanderTax(header){
+    const stats=header?.querySelector('.v043-top-stats');
+    if(!stats)return;
+    [...stats.children].forEach(el=>{
+      const label=(el.querySelector('small')?.textContent||'').trim().toUpperCase();
+      if(label==='CMD TAX') el.remove();
+    });
+  }
+
+  function apply(){
+    if(!window.state?.started)return;
+    document.querySelectorAll('#gameScreen .v043-active[data-player-card]').forEach(card=>{
+      const i=Number(card.dataset.playerCard);
+      const p=window.state?.players?.[i];
+      const header=card.querySelector('.v043-header');
+      if(!p||!header)return;
+      removeActiveHeaderCommanderTax(header);
+      renderStatusIcons(header,p);
+    });
+  }
+
+  /* Run after all existing render/visual-master wrappers so this is the final header authority. */
+  const prev=window.renderAll;
+  if(typeof prev==='function'&&!prev.__cc055step3){
+    const wrapped=function(){
+      const r=prev.apply(this,arguments);
+      try{apply()}catch(e){console.error('0.5.5 Step 3 header status icons',e);}
+      return r;
+    };
+    wrapped.__cc055step3=true;
+    window.renderAll=wrapped;
+  }
+
+  const oldMaster=window.v052VisualMasterApply;
+  if(typeof oldMaster==='function'&&!oldMaster.__cc055step3){
+    const wrappedMaster=function(){
+      const r=oldMaster.apply(this,arguments);
+      try{apply()}catch(e){console.error('0.5.5 Step 3 visual apply',e);}
+      return r;
+    };
+    wrappedMaster.__cc055step3=true;
+    window.v052VisualMasterApply=wrappedMaster;
+  }
+
+  setTimeout(()=>{try{apply()}catch(e){console.error(e)}},0);
+})();
+</script>
+
 </body>
 </html>
