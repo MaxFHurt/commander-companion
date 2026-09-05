@@ -3222,5 +3222,435 @@ body{padding-bottom:env(safe-area-inset-bottom)!important;}
 })();
 </script>
 
+
+<style id="cc055-step6-floating-game-header">
+/* 0.5.5 Master — Step 6
+   ONLY approved area changed: game header + anchored Game Log.
+   Player cards/gameplay layout below remain untouched. */
+
+body.cc055-game-header-active .appbar{
+  position:fixed!important;
+  top:0!important;
+  left:0!important;
+  right:0!important;
+  z-index:5000!important;
+  display:grid!important;
+  grid-template-columns:44px 60px minmax(122px,1fr) 60px 44px!important;
+  grid-template-rows:64px auto!important;
+  align-items:center!important;
+  gap:5px!important;
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:calc(env(safe-area-inset-top) + 4px) 10px 7px!important;
+  box-sizing:border-box!important;
+  background:linear-gradient(180deg,#07090a 0%,#090c0d 72%,rgba(9,12,13,.98) 100%)!important;
+  border-bottom:1px solid #e95b2a!important;
+  box-shadow:0 7px 20px rgba(0,0,0,.72)!important;
+}
+
+/* Expose the existing profile/logo/home controls as grid items. */
+body.cc055-game-header-active .appbar .brand-wrap,
+body.cc055-game-header-active .appbar .appbar-actions{
+  display:contents!important;
+}
+body.cc055-game-header-active .appbar #roomBadge,
+body.cc055-game-header-active .appbar #saveState{
+  display:none!important;
+}
+
+body.cc055-game-header-active #profileHeaderBtn{
+  grid-column:1!important;
+  grid-row:1!important;
+  width:44px!important;
+  min-width:44px!important;
+  height:44px!important;
+  min-height:44px!important;
+  padding:0!important;
+  display:grid!important;
+  place-items:center!important;
+  border:1px solid #343b3e!important;
+  border-radius:6px!important;
+  background:#090c0d!important;
+}
+body.cc055-game-header-active #profileHeaderBtn img{
+  display:none!important;
+}
+body.cc055-game-header-active #profileHeaderBtn .cc055-profile-glyph{
+  width:26px!important;
+  height:26px!important;
+  display:block!important;
+  color:#f2f2ef!important;
+}
+
+body.cc055-game-header-active #cc055BoardHeaderBtn{
+  grid-column:2!important;
+  grid-row:1!important;
+}
+body.cc055-game-header-active #cc055StatsHeaderBtn{
+  grid-column:4!important;
+  grid-row:1!important;
+}
+body.cc055-game-header-active .cc055-header-tool{
+  width:60px!important;
+  height:50px!important;
+  min-width:0!important;
+  padding:3px 1px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:1px!important;
+  border:1px solid #343b3e!important;
+  border-radius:6px!important;
+  background:linear-gradient(145deg,#111516,#080a0b)!important;
+  color:#f0f0ec!important;
+  font:900 8px/1 var(--cc-font-head)!important;
+  letter-spacing:.45px!important;
+}
+body.cc055-game-header-active .cc055-header-tool svg{
+  width:22px!important;
+  height:22px!important;
+  display:block!important;
+}
+
+body.cc055-game-header-active .top-brand-lockup{
+  grid-column:3!important;
+  grid-row:1!important;
+  min-width:0!important;
+  width:100%!important;
+  height:58px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  cursor:pointer!important;
+  overflow:hidden!important;
+}
+body.cc055-game-header-active .top-brand-lockup img{
+  width:min(100%,150px)!important;
+  max-width:150px!important;
+  height:auto!important;
+  max-height:54px!important;
+  object-fit:contain!important;
+}
+body.cc055-game-header-active .top-brand-lockup > :not(img){
+  display:none!important;
+}
+
+/* Existing top-right Home button becomes Game Settings. */
+body.cc055-game-header-active #homeBtn{
+  grid-column:5!important;
+  grid-row:1!important;
+  width:44px!important;
+  min-width:44px!important;
+  height:44px!important;
+  min-height:44px!important;
+  padding:0!important;
+  display:grid!important;
+  place-items:center!important;
+  border:1px solid #343b3e!important;
+  border-radius:6px!important;
+  background:#090c0d!important;
+  color:#f2f2ef!important;
+  font-size:0!important;
+}
+body.cc055-game-header-active #homeBtn .cc055-settings-glyph{
+  width:27px!important;
+  height:27px!important;
+  display:block!important;
+}
+
+/* The old three-button utility strip is replaced by the new header controls. */
+body.cc055-game-header-active #gameScreen .game-utility-strip{
+  display:none!important;
+}
+
+/* Game Log is physically attached beneath the new header row. */
+body.cc055-game-header-active .appbar #compactGameLog{
+  grid-column:1 / -1!important;
+  grid-row:2!important;
+  position:relative!important;
+  inset:auto!important;
+  width:100%!important;
+  max-width:none!important;
+  height:66px!important;
+  min-height:66px!important;
+  margin:0!important;
+  padding:7px 12px!important;
+  box-sizing:border-box!important;
+  display:grid!important;
+  grid-template-columns:86px minmax(0,1fr) 24px!important;
+  align-items:center!important;
+  gap:7px!important;
+  border:1px solid #ed5a28!important;
+  border-radius:12px!important;
+  background:#080d0f!important;
+  box-shadow:none!important;
+  clip-path:none!important;
+}
+body.cc055-game-header-active .appbar #compactGameLog .compact-log-title{
+  font-size:20px!important;
+  line-height:.9!important;
+  text-align:left!important;
+}
+body.cc055-game-header-active .appbar #compactGameLog .compact-log-lines{
+  min-width:0!important;
+  max-height:48px!important;
+  overflow:hidden!important;
+  text-align:left!important;
+  font-size:11px!important;
+  line-height:1.22!important;
+}
+body.cc055-game-header-active .appbar #compactGameLog .compact-log-expand{
+  justify-self:end!important;
+}
+
+/* Offset the game by the ACTUAL measured floating header height. */
+body.cc055-game-header-active #gameScreen{
+  padding-top:calc(var(--cc055-floating-header-h,150px) + 8px)!important;
+}
+
+/* Injected game-header controls should not appear on non-game screens. */
+body:not(.cc055-game-header-active) #cc055BoardHeaderBtn,
+body:not(.cc055-game-header-active) #cc055StatsHeaderBtn{
+  display:none!important;
+}
+
+@media(max-width:390px){
+  body.cc055-game-header-active .appbar{
+    grid-template-columns:42px 55px minmax(112px,1fr) 55px 42px!important;
+    gap:3px!important;
+    padding-left:7px!important;
+    padding-right:7px!important;
+  }
+  body.cc055-game-header-active .cc055-header-tool{
+    width:55px!important;
+    font-size:7px!important;
+  }
+  body.cc055-game-header-active .top-brand-lockup img{
+    max-width:138px!important;
+  }
+}
+</style>
+
+<script id="cc055-step6-floating-game-header-runtime">
+(function(){
+  'use strict';
+
+  const PROFILE_SVG = `
+    <svg class="cc055-profile-glyph" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="8" r="4" fill="currentColor"/>
+      <path d="M4.5 21c.6-4.4 3.2-6.7 7.5-6.7s6.9 2.3 7.5 6.7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+    </svg>`;
+
+  const BOARD_SVG = `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="16" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M9 4v16M15 4v16M3 9.3h18M3 14.7h18" stroke="currentColor" stroke-width="1.15" opacity=".9"/>
+    </svg>`;
+
+  const STATS_SVG = `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 20V11h4v9H4Zm6 0V4h4v16h-4Zm6 0V8h4v12h-4Z" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    </svg>`;
+
+  const SETTINGS_SVG = `
+    <svg class="cc055-settings-glyph" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M12 2.5v2.1M12 19.4v2.1M2.5 12h2.1M19.4 12h2.1M5.3 5.3l1.5 1.5M17.2 17.2l1.5 1.5M18.7 5.3l-1.5 1.5M6.8 17.2l-1.5 1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="12" cy="12" r="7.1" fill="none" stroke="currentColor" stroke-width="1.3" opacity=".7"/>
+    </svg>`;
+
+  let logMarker=null;
+  let originalHomeHTML=null;
+  let originalHomeTitle=null;
+  let originalHomeAria=null;
+  let originalHomeClick=null;
+
+  function gameActive(){
+    return !!document.getElementById('gameScreen')?.classList.contains('active');
+  }
+
+  function openBoard(){
+    const btn=document.getElementById('boardUtilityBtn');
+    if(btn && typeof btn.onclick==='function') return btn.onclick();
+    document.querySelector('.board-detail')?.classList.add('utility-open');
+    if(typeof window.renderBoard==='function') window.renderBoard();
+  }
+
+  function openStats(){
+    const btn=document.getElementById('v051GameStatsUtility');
+    if(btn && typeof btn.onclick==='function') return btn.onclick();
+    if(typeof window.v051OpenGameStats==='function') return window.v051OpenGameStats();
+    if(typeof window.openPlayerGameStats==='function') return window.openPlayerGameStats(window.state?.active||0);
+  }
+
+  function openGameSettings(){
+    const btn=document.getElementById('settingsUtilityBtn');
+    if(btn && typeof btn.onclick==='function') return btn.onclick();
+    document.querySelector('.bottom-settings')?.classList.add('utility-open');
+  }
+
+  function goHome(){
+    if(typeof window.home==='function') return window.home();
+    if(typeof window.show==='function') return window.show('homeScreen');
+  }
+
+  function ensureButtons(){
+    const appbar=document.querySelector('.appbar');
+    const brandWrap=appbar?.querySelector('.brand-wrap');
+    const actions=appbar?.querySelector('.appbar-actions');
+    const profile=document.getElementById('profileHeaderBtn');
+    const homeBtn=document.getElementById('homeBtn');
+    const brand=appbar?.querySelector('.top-brand-lockup');
+    if(!appbar||!brandWrap||!actions||!profile||!homeBtn||!brand)return;
+
+    if(!document.getElementById('cc055BoardHeaderBtn')){
+      const b=document.createElement('button');
+      b.id='cc055BoardHeaderBtn';
+      b.className='cc055-header-tool';
+      b.type='button';
+      b.title='Detailed Board';
+      b.setAttribute('aria-label','Open detailed board');
+      b.innerHTML=BOARD_SVG+'<span>BOARD</span>';
+      b.onclick=openBoard;
+      appbar.insertBefore(b,brandWrap);
+    }
+
+    if(!document.getElementById('cc055StatsHeaderBtn')){
+      const b=document.createElement('button');
+      b.id='cc055StatsHeaderBtn';
+      b.className='cc055-header-tool';
+      b.type='button';
+      b.title='Game Stats';
+      b.setAttribute('aria-label','Open game stats');
+      b.innerHTML=STATS_SVG+'<span>STATS</span>';
+      b.onclick=openStats;
+      appbar.insertBefore(b,actions);
+    }
+
+    if(!profile.querySelector('.cc055-profile-glyph')){
+      profile.insertAdjacentHTML('beforeend',PROFILE_SVG);
+    }
+    profile.title='Player Profile';
+    profile.setAttribute('aria-label','Open player profile');
+
+    brand.setAttribute('role','button');
+    brand.setAttribute('tabindex','0');
+    brand.setAttribute('aria-label','Return to home screen');
+    brand.title='Home';
+    brand.onclick=goHome;
+    brand.onkeydown=e=>{
+      if(e.key==='Enter'||e.key===' '){
+        e.preventDefault();
+        goHome();
+      }
+    };
+
+    if(originalHomeHTML===null){
+      originalHomeHTML=homeBtn.innerHTML;
+      originalHomeTitle=homeBtn.title||'';
+      originalHomeAria=homeBtn.getAttribute('aria-label');
+      originalHomeClick=homeBtn.onclick;
+    }
+  }
+
+  function moveLogIntoHeader(){
+    const appbar=document.querySelector('.appbar');
+    const screen=document.getElementById('gameScreen');
+    const log=document.getElementById('compactGameLog');
+    if(!appbar||!screen||!log)return;
+
+    if(!logMarker){
+      logMarker=document.createComment('cc055 compact game log home');
+      log.parentNode?.insertBefore(logMarker,log);
+    }
+    if(log.parentElement!==appbar) appbar.appendChild(log);
+  }
+
+  function restoreLog(){
+    const log=document.getElementById('compactGameLog');
+    if(log && logMarker?.parentNode){
+      logMarker.parentNode.insertBefore(log,logMarker.nextSibling);
+    }
+  }
+
+  function measure(){
+    if(!gameActive())return;
+    const appbar=document.querySelector('.appbar');
+    if(!appbar)return;
+    requestAnimationFrame(()=>{
+      const h=Math.ceil(appbar.getBoundingClientRect().height);
+      if(h>0) document.documentElement.style.setProperty('--cc055-floating-header-h',h+'px');
+    });
+  }
+
+  function enterGameHeader(){
+    ensureButtons();
+    document.body.classList.add('cc055-game-header-active');
+
+    const homeBtn=document.getElementById('homeBtn');
+    if(homeBtn){
+      homeBtn.innerHTML=SETTINGS_SVG;
+      homeBtn.title='Game Settings';
+      homeBtn.setAttribute('aria-label','Open game settings');
+      homeBtn.onclick=openGameSettings;
+    }
+
+    moveLogIntoHeader();
+    measure();
+  }
+
+  function leaveGameHeader(){
+    document.body.classList.remove('cc055-game-header-active');
+
+    const homeBtn=document.getElementById('homeBtn');
+    if(homeBtn && originalHomeHTML!==null){
+      homeBtn.innerHTML=originalHomeHTML;
+      homeBtn.title=originalHomeTitle||'';
+      if(originalHomeAria===null) homeBtn.removeAttribute('aria-label');
+      else homeBtn.setAttribute('aria-label',originalHomeAria);
+      homeBtn.onclick=originalHomeClick;
+    }
+
+    restoreLog();
+    document.documentElement.style.removeProperty('--cc055-floating-header-h');
+  }
+
+  function sync(){
+    ensureButtons();
+    if(gameActive()) enterGameHeader();
+    else leaveGameHeader();
+  }
+
+  const previousShow=window.show;
+  if(typeof previousShow==='function'&&!previousShow.__cc055step6){
+    const wrapped=function(){
+      const r=previousShow.apply(this,arguments);
+      setTimeout(sync,0);
+      return r;
+    };
+    wrapped.__cc055step6=true;
+    window.show=wrapped;
+  }
+
+  const previousRender=window.renderAll;
+  if(typeof previousRender==='function'&&!previousRender.__cc055step6){
+    const wrapped=function(){
+      const r=previousRender.apply(this,arguments);
+      setTimeout(sync,0);
+      return r;
+    };
+    wrapped.__cc055step6=true;
+    window.renderAll=wrapped;
+  }
+
+  window.addEventListener('resize',measure,{passive:true});
+  window.addEventListener('orientationchange',()=>setTimeout(measure,100),{passive:true});
+
+  setTimeout(sync,0);
+})();
+</script>
+
 </body>
 </html>
