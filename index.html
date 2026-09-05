@@ -2991,5 +2991,236 @@ body{padding-bottom:env(safe-area-inset-bottom)!important;}
 }
 </style>
 
+
+<style id="cc055-step5-single-rotating-status">
+/* 0.5.5 Master — Step 5
+   ONLY change: status indicator shows one active status at a time.
+   Counts are overlaid when a status has a meaningful stack/count. */
+#gameScreen .cc055-status-icons{
+  width:28px!important;
+  min-width:28px!important;
+  max-width:28px!important;
+  height:28px!important;
+  overflow:visible!important;
+  position:relative!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+#gameScreen .cc055-status-icons:empty{
+  display:none!important;
+}
+#gameScreen .cc055-status-icons .cc055-status-icon{
+  display:none!important;
+}
+#gameScreen .cc055-status-icons .cc055-status-icon.cc055-status-current{
+  display:grid!important;
+}
+#gameScreen .cc055-status-icon{
+  position:relative!important;
+}
+#gameScreen .cc055-status-count{
+  position:absolute!important;
+  right:-7px!important;
+  top:-7px!important;
+  min-width:15px!important;
+  height:15px!important;
+  padding:0 3px!important;
+  border-radius:999px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  box-sizing:border-box!important;
+  background:#0a0d0e!important;
+  border:1px solid currentColor!important;
+  color:inherit!important;
+  font-size:9px!important;
+  font-weight:900!important;
+  line-height:1!important;
+  font-family:inherit!important;
+  z-index:3!important;
+}
+@media(max-width:430px){
+  #gameScreen .cc055-status-icons{
+    width:24px!important;
+    min-width:24px!important;
+    max-width:24px!important;
+    height:24px!important;
+  }
+  #gameScreen .cc055-status-count{
+    right:-6px!important;
+    top:-6px!important;
+    min-width:14px!important;
+    height:14px!important;
+    font-size:8px!important;
+  }
+}
+</style>
+
+<script id="cc055-step5-single-rotating-status-runtime">
+(function(){
+  'use strict';
+
+  const ROTATE_MS=2600;
+  const states=new WeakMap();
+
+  function numericCount(p, kind, label){
+    if(!p) return 0;
+
+    if(kind==='poison'){
+      const n=Number(p.poison||0);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    const candidates=[
+      p.statusCounters,
+      p.statusCounts,
+      p.counters,
+      p.playerCounters
+    ].filter(x=>x && typeof x==='object');
+
+    const keys=[
+      kind,
+      String(label||'').toLowerCase(),
+      String(label||'').toLowerCase().replace(/\s+/g,''),
+      String(label||'').toLowerCase().replace(/\s+/g,'_')
+    ];
+
+    for(const obj of candidates){
+      for(const key of keys){
+        const val=Number(obj[key]);
+        if(Number.isFinite(val) && val>0) return val;
+      }
+    }
+
+    const directKeys=[
+      kind,
+      kind+'Count',
+      kind+'Counters',
+      kind+'Counter'
+    ];
+    for(const key of directKeys){
+      const val=Number(p[key]);
+      if(Number.isFinite(val) && val>0) return val;
+    }
+
+    const m=String(label||'').match(/(?:^|\s)(\d+)\s*$/);
+    if(m){
+      const val=Number(m[1]);
+      if(Number.isFinite(val) && val>0) return val;
+    }
+
+    return 0;
+  }
+
+  function inferKind(icon){
+    const classes=[...icon.classList];
+    return classes.find(c=>[
+      'monarch','poison','initiative','blessing','ring','stun','generic'
+    ].includes(c)) || 'generic';
+  }
+
+  function ensureCount(icon,p){
+    icon.querySelector('.cc055-status-count')?.remove();
+
+    const kind=inferKind(icon);
+    const label=icon.getAttribute('aria-label') || icon.title || '';
+    const count=numericCount(p,kind,label);
+
+    if(count>1 || (kind==='poison' && count>0)){
+      const badge=document.createElement('span');
+      badge.className='cc055-status-count';
+      badge.textContent=String(count);
+      badge.setAttribute('aria-hidden','true');
+      icon.appendChild(badge);
+    }
+  }
+
+  function showIndex(tray,p,index){
+    const icons=[...tray.querySelectorAll(':scope > .cc055-status-icon')];
+    if(!icons.length){
+      states.delete(tray);
+      return;
+    }
+
+    const safe=((index%icons.length)+icons.length)%icons.length;
+    icons.forEach((icon,i)=>{
+      icon.classList.toggle('cc055-status-current',i===safe);
+      ensureCount(icon,p);
+    });
+
+    const current=icons[safe];
+    tray.title=current.getAttribute('aria-label') || current.title || '';
+    tray.setAttribute('aria-label',tray.title || 'Player status');
+
+    const st=states.get(tray)||{};
+    st.index=safe;
+    st.length=icons.length;
+    states.set(tray,st);
+  }
+
+  function syncTray(tray,p){
+    const icons=[...tray.querySelectorAll(':scope > .cc055-status-icon')];
+
+    if(!icons.length){
+      if(tray.__cc055Timer){
+        clearInterval(tray.__cc055Timer);
+        tray.__cc055Timer=null;
+      }
+      states.delete(tray);
+      tray.removeAttribute('title');
+      tray.removeAttribute('aria-label');
+      return;
+    }
+
+    let st=states.get(tray)||{index:0,length:icons.length};
+    if(st.index>=icons.length) st.index=0;
+    st.length=icons.length;
+    states.set(tray,st);
+    showIndex(tray,p,st.index);
+
+    if(icons.length<=1){
+      if(tray.__cc055Timer){
+        clearInterval(tray.__cc055Timer);
+        tray.__cc055Timer=null;
+      }
+      return;
+    }
+
+    if(!tray.__cc055Timer){
+      tray.__cc055Timer=setInterval(()=>{
+        const current=states.get(tray)||{index:0};
+        showIndex(tray,p,(current.index||0)+1);
+      },ROTATE_MS);
+    }
+  }
+
+  function apply(){
+    if(!window.state?.started)return;
+
+    document.querySelectorAll('#gameScreen .v043-active[data-player-card]').forEach(card=>{
+      const i=Number(card.dataset.playerCard);
+      const p=window.state?.players?.[i];
+      const tray=card.querySelector('.cc055-status-icons');
+      if(!p || !tray) return;
+      syncTray(tray,p);
+    });
+  }
+
+  const prev=window.renderAll;
+  if(typeof prev==='function' && !prev.__cc055step5){
+    const wrapped=function(){
+      const r=prev.apply(this,arguments);
+      try{apply()}catch(e){console.error('0.5.5 Step 5 rotating status',e);}
+      return r;
+    };
+    wrapped.__cc055step5=true;
+    window.renderAll=wrapped;
+  }
+
+  setTimeout(()=>{try{apply()}catch(e){console.error(e)}},0);
+})();
+</script>
+
 </body>
 </html>
