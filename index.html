@@ -2761,5 +2761,36 @@ body{padding-bottom:env(safe-area-inset-bottom)!important;}
 })();
 </script>
 
+
+<style id="cc055-step2-center-utility-strip-final">
+/* 0.5.5 Master — Step 2
+   ONLY change: final winning override for the three utility buttons. */
+#gameScreen .game-utility-strip{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:8px!important;
+  width:100%!important;
+  margin:0 auto 8px!important;
+  padding-left:8px!important;
+  padding-right:8px!important;
+  box-sizing:border-box!important;
+}
+#gameScreen .game-utility-strip #boardUtilityBtn,
+#gameScreen .game-utility-strip #settingsUtilityBtn,
+#gameScreen .game-utility-strip #v051GameStatsUtility{
+  grid-column:auto!important;
+  width:100%!important;
+  min-width:0!important;
+  justify-self:stretch!important;
+}
+@media(max-width:760px){
+  #gameScreen .game-utility-strip{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:6px!important;
+    padding:6px 8px 8px!important;
+  }
+}
+</style>
+
 </body>
 </html>
