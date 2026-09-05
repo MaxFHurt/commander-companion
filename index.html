@@ -926,6 +926,27 @@ button{transition:transform .12s ease,border-color .16s ease,box-shadow .16s eas
  #gameScreen .v048-mana-row>span{gap:1px!important;}
 }
 </style>
+
+<style id="cc055-step1-center-utility-strip">
+/* 0.5.5 Master — Step 1
+   ONLY change: center Detailed Board / Game Settings / Game Stats evenly. */
+#gameScreen .game-utility-strip{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:8px!important;
+  width:100%!important;
+  box-sizing:border-box!important;
+}
+#gameScreen .game-utility-strip #boardUtilityBtn,
+#gameScreen .game-utility-strip #settingsUtilityBtn,
+#gameScreen .game-utility-strip #v051GameStatsUtility{
+  grid-column:auto!important;
+  width:100%!important;
+  min-width:0!important;
+  justify-self:stretch!important;
+}
+</style>
+
 </head>
 <body>
 <div id="startupStatus" class="startup-status" hidden>Starting…</div>
